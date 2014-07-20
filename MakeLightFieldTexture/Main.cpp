@@ -48,8 +48,6 @@ int main(int argc, char** argv) {
 				texture = cv::Mat(imgH * nrows, imgW * ncols, CV_8UC3);
 			}
 
-
-
 			int startX = i * imgW;
 			int startY = j * imgH;
 			I.convertTo(texture(cv::Rect(startX, startY, imgW, imgH)), CV_8U);

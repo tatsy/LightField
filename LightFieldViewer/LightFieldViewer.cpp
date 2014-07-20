@@ -79,12 +79,12 @@ void LightFieldViewer::keyboard(unsigned char key, int x, int y)
 		break;
 
 	case 'u':
-		focal += 0.1f;
+		focal = min(1.0f, focal + 0.1f);
 		update();
 		break;
 
 	case 'd':
-		focal -= 0.1f;
+		focal = max(-1.0f, focal - 0.1f);
 		update();
 		break;
 
@@ -94,7 +94,7 @@ void LightFieldViewer::keyboard(unsigned char key, int x, int y)
 		break;
 
 	case 's':
-		aperture -= 1.0f;
+		aperture = max(1.0f, aperture - 1.0f);
 		update();
 		break;
 	}
