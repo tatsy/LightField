@@ -16,6 +16,3 @@ void VirtualLFCamera::loadModel(string& filename)
 {
 
 }
-
-
-
