@@ -11,11 +11,6 @@ GLuint LightFieldViewer::programId = 0;
 float  LightFieldViewer::focal     = 0.0f;
 float  LightFieldViewer::aperture  = 1.0f;
 
-LightFieldViewer& LightFieldViewer::getInstance(int* argcp, char** argv) 
-{
-	static LightFieldViewer viewer(argcp, argv);
-	return viewer;
-}
 
 LightFieldViewer::LightFieldViewer(int* argcp, char** argv) :
 	vShaderId(0),
