@@ -1,7 +1,9 @@
 LightField
 ==========
 
-Light field image viewer with Qt5.
+[![Build Status](https://travis-ci.org/tatsy/LightField.svg?branch=development)](https://travis-ci.org/tatsy/LightField)
+
+> Light field image viewer with Qt5.
 
 ## Installation
 
@@ -25,13 +27,9 @@ Run the viewer, push the ```Load``` button, and choose the unzipped folder ```re
 
 #### Interface
 
-* Focus and aperture size
+* **Focus and aperture size:** with the sliders in the right, you can change the focus and aperture size of the camera.
 
-With the sliders in the right, you can change the focus and aperture size of the camera.
-
-* View point
-
-By clicking and dragging on the view, you can change the view point.
+* **View point:** by clicking and dragging on the view, you can change the view point.
 
 ## Screen shot
 
