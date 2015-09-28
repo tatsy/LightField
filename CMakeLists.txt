@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(LightField)
 
+# Set root directory
+set(LIGHT_FIELD_ROOT ${CMAKE_CURRENT_LIST_DIR})
+
+# Compiler options
 if (NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -O2")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
@@ -22,20 +26,18 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 find_package(OpenGL REQUIRED)
 
-# Find OpenCV
-if (WIN32)
-  set(Your_OpenCV_DIR "Your_OpenCV_DIR" CACHE STRING "Your_OpenCV_DIR")
-  if (NOT EXISTS "${Your_OpenCV_DIR}/include/opencv2/opencv.hpp")
-    message(FATAL_ERROR "ERROR: OpenCV not found!!")
-  endif()
-endif()
+# Set output path
+set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
 
-find_package(OpenCV REQUIRED)
-  include_directories(${OPENCV_INCLUDE_DIR})
-
-if (OPENCV_FOUND)
-endif()
-
-add_subdirectory(LightFieldViewer)
+add_subdirectory(viewer)
 add_subdirectory(LightFieldTexture)
 add_subdirectory(LightFieldCamera)

@@ -1,0 +1,12 @@
+#ifdef _MSC_VER
+#pragma once
+#endif
+
+#ifndef _DIRECTORYES_H_
+#define _DIRECTORYES_H_
+
+#include <string>
+
+const std::string kShaderDirectory = "@LIGHT_FIELD_ROOT@/shaders/";
+
+#endif  // _DIRECTORYES_H_
