@@ -1,9 +1,7 @@
 LightField
 ==========
 
-[![Build Status](https://travis-ci.org/tatsy/LightField.svg)](https://travis-ci.org/tatsy/LightField)
-
-> Light field image viewer with Qt5.
+Light field image viewer with Qt5.
 
 ## Installation
 
@@ -17,11 +15,23 @@ $ cmake --build .
 
 ## Usage
 
-This viewer accepts light field images from [Stanford Light Field Archive](http://lightfield.stanford.edu/lfs.html). You can find the rectified datasets at this archive.
+#### Datasets
 
-After downloading the rectified dataset and unzip the archieve, you can get several images corresponding to each camera view. Then, run the viewer, push the ```Load``` button, and choose the unzipped folder named ```rectified``` (you can change the folder name, but please make sure that the chosen directory contains all the downloaded images).
+This viewer accepts light field images from [Stanford Light Field Archive](http://lightfield.stanford.edu/lfs.html). Please download the rectified datasets at this archive.
 
-You can change the length to the focal plane and aperture size with slider interface. Also you can change the view point by clicking/dragging on the view.
+#### Load
+
+Run the viewer, push the ```Load``` button, and choose the unzipped folder ```rectified``` (you can change the folder name, but please make sure that the chosen directory contains all the downloaded images).
+
+#### Interface
+
+* Focus and aperture size
+
+With the sliders in the right, you can change the focus and aperture size of the camera.
+
+* View point
+
+By clicking and dragging on the view, you can change the view point.
 
 ## Screen shot
 

@@ -43,7 +43,7 @@ public:
         , _cameraX(info._cameraX) {
     }
 
-    ImageInfo::~ImageInfo() {
+    ~ImageInfo() {
     }
 
     ImageInfo& operator=(const ImageInfo& info) {
