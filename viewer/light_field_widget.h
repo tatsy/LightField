@@ -31,7 +31,7 @@ class LIGHT_FIELD_WIDGET_DLL LightFieldWidget : public QOpenGLWidget {
     Q_OBJECT
 
 private:
-	float  focal;
+	float  focus;
 	float  aperture;
     QPointF cameraPosition;
 
@@ -46,8 +46,10 @@ public:
     ~LightFieldWidget();
 
     void setLightField(const std::vector<ImageInfo>& viewInfos, int rows, int cols);
-    void setFocalLength(float value);
+    void setFocusPoint(float value);
     void setApertureSize(float value);
+    float focusPoint() const;
+    float apertureSize() const;
 
 protected:
     void initializeGL() override;
@@ -57,7 +59,6 @@ protected:
     void mousePressEvent(QMouseEvent* ev) override;
     void mouseMoveEvent(QMouseEvent* ev) override;
     void mouseReleaseEvent(QMouseEvent* ev) override;
-
 
 protected slots:
     void animate();

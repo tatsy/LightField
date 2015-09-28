@@ -10,14 +10,14 @@
 
 LightFieldWidget::LightFieldWidget(QWidget* parent)
     : QOpenGLWidget(parent)
-    , focal(0.0f)
-    , aperture(1.0f)
+    , focus(0.0f)
+    , aperture(5.0f)
     , cameraPosition(0.5f, 0.5f)
     , shaderProgram(new QOpenGLShaderProgram)
     , lightFieldTexture(new QOpenGLTexture(QOpenGLTexture::Target::Target2D))
     , timer(new QTimer)
     , isClick(false) {
-    timer->start(30);
+    // timer->start(100);
     connect(timer, SIGNAL(timeout()), this, SLOT(animate()));
 }
 
@@ -66,7 +66,8 @@ void LightFieldWidget::paintGL() {
     modelviewMatrix.setToIdentity();
 
     // Enable shader
-   shaderProgram->bind();
+    makeCurrent();
+    shaderProgram->bind();
 	
 	// Show textured quad
     if (lightFieldTexture->isCreated()) {
@@ -75,7 +76,7 @@ void LightFieldWidget::paintGL() {
         shaderProgram->setUniformValue("modelviewMatrix", modelviewMatrix);
 
         // Set camera parameters
-        shaderProgram->setUniformValue("focalLength", focal);
+        shaderProgram->setUniformValue("focusPoint", focus);
         shaderProgram->setUniformValue("apertureSize", aperture);
         shaderProgram->setUniformValue("cameraPositionX", (float)cameraPosition.x());
         shaderProgram->setUniformValue("cameraPositionY", (float)cameraPosition.y());
@@ -180,7 +181,7 @@ void LightFieldWidget::setLightField(const std::vector<ImageInfo>& viewInfos,
     // Set uniform values to the shader
     if (shaderProgram != nullptr) {
         shaderProgram->setUniformValue("texture", 0);
-        shaderProgram->setUniformValue("focalLength", focal);
+        shaderProgram->setUniformValue("focusPoint", focus);
         shaderProgram->setUniformValue("apertureSize", aperture);
         shaderProgram->setUniformValue("rows", rows);
         shaderProgram->setUniformValue("cols", cols);
@@ -188,12 +189,20 @@ void LightFieldWidget::setLightField(const std::vector<ImageInfo>& viewInfos,
     qDebug("[INFO] light field texture is binded!!");
 }
 
-void LightFieldWidget::setFocalLength(float value) {
-    focal = value;
+void LightFieldWidget::setFocusPoint(float value) {
+    focus = value;
 }
 
 void LightFieldWidget::setApertureSize(float value) {
     aperture = value;
+}
+
+float LightFieldWidget::focusPoint() const {
+    return focus;
+}
+
+float LightFieldWidget::apertureSize() const {
+    return aperture;
 }
 
 void LightFieldWidget::animate() {

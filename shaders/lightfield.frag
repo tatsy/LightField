@@ -9,7 +9,7 @@ uniform int rows;
 uniform int cols;
 uniform float cameraPositionX;
 uniform float cameraPositionY;
-uniform float focalLength;
+uniform float focusPoint;
 uniform float apertureSize;
 
 void main(void) {
@@ -23,11 +23,11 @@ void main(void) {
 		float cameraGapY = gapRatio / (rows - 1);
 		float initCameraX = -cameraGapX * (cols - 1) * 0.5;
 		float initCameraY = -cameraGapY * (rows - 1) * 0.5;
-		float focalRatio = 10.0 * gapRatio;
+		float focusRatio = 10.0 * gapRatio;
 
 		float centerCameraX = initCameraX + cameraIndexX * cameraGapX;
 		float centerCameraY = initCameraY + cameraIndexY * cameraGapY;
-		float focalLengthRatio = 1.0 + focalLength / focalRatio;
+		float focusPointRatio = 1.0 + focusPoint / focusRatio;
 
 		color = vec4(0.0, 0.0, 0.0, 0.0);
 		int  validPixelCount = 0;
@@ -40,8 +40,8 @@ void main(void) {
 						if (dx * dx + dy * dy < apertureSize) {
 								float projX   = 2.0 * textureCoords.s - 1.0;
 								float projY   = 2.0 * textureCoords.t - 1.0;
-								float pixelX = cameraX + (projX - cameraX) * focalLengthRatio;
-								float pixelY = cameraY + (projY - cameraY) * focalLengthRatio;
+								float pixelX = cameraX + (projX - cameraX) * focusPointRatio;
+								float pixelY = cameraY + (projY - cameraY) * focusPointRatio;
 								float px = 0.5 * pixelX + 0.5;
 								float py = 0.5 * pixelY + 0.5;
 								if(px >= 0.0 && py >= 0.0 && px < 1.0 && py < 1.0) {

@@ -21,10 +21,8 @@ After downloading the rectified dataset and unzip the archieve, you can get seve
 
 ## Screen shot
 
-![Light field viewer](output/screen_shot.jpg)
-
+![Light field viewer](output/light_field_output.jpg)
 
 ## License
 
 * MIT License, Tatsuya Yatagawa (tatsy)
-

@@ -10,7 +10,11 @@ MainInterface::MainInterface(QWidget* parent)
     , rightContainer(new QWidget)
     , vLayoutForRight(new QVBoxLayout)
     , loadButton(new QPushButton)
-    , focalSlider(new QSlider(Qt::Orientation::Horizontal))
+    , focusLabel(new QLabel("focus point"))
+    , apertureLabel(new QLabel("aperture size"))
+    , focusEdit(new QLineEdit("0.00"))
+    , apertureEdit(new QLineEdit("5.00"))
+    , focusSlider(new QSlider(Qt::Orientation::Horizontal))
     , apertureSlider(new QSlider(Qt::Orientation::Horizontal))
     , viewInfos()
     , isClicking(false)
@@ -34,27 +38,42 @@ MainInterface::MainInterface(QWidget* parent)
     // Right container
     rightContainer->setLayout(vLayoutForRight);
 
-    focalSlider->setRange(-100, 100);
-    focalSlider->setSingleStep(1);
-    focalSlider->setSliderPosition(0);
-    vLayoutForRight->addWidget(focalSlider);
+    loadButton->setText("Load");
+    vLayoutForRight->addWidget(loadButton);
+
+    focusSlider->setRange(-100, 100);
+    focusSlider->setSingleStep(1);
+    focusSlider->setSliderPosition(0);
+    vLayoutForRight->addWidget(focusLabel);
+    vLayoutForRight->addWidget(focusEdit);
+    vLayoutForRight->addWidget(focusSlider);
 
     apertureSlider->setRange(0, 200);
     apertureSlider->setSingleStep(1);
     apertureSlider->setSliderPosition(50);
+    vLayoutForRight->addWidget(apertureLabel);
+    vLayoutForRight->addWidget(apertureEdit);
     vLayoutForRight->addWidget(apertureSlider);
 
-    loadButton->setText("Load");
-    vLayoutForRight->addWidget(loadButton);
+    vLayoutForRight->addStretch();
 
     // Signal and slots
     connect(loadButton, SIGNAL(clicked()), this, SLOT(OnLoadButtonClicked()));
-    connect(focalSlider, SIGNAL(valueChanged(int)), SLOT(OnFocalSliderValueChanged(int)));
+    connect(focusSlider, SIGNAL(valueChanged(int)), SLOT(OnFocusSliderValueChanged(int)));
     connect(apertureSlider, SIGNAL(valueChanged(int)), SLOT(OnApertureSliderValueChanged(int)));
 }
 
 MainInterface::~MainInterface() {
+    delete focusLabel;
+    delete focusEdit;
+    delete focusSlider;
+
+    delete apertureLabel;
+    delete apertureEdit;
+    delete apertureSlider;
+
     delete loadButton;
+
     delete vLayoutForRight;
     delete rightContainer;
 
@@ -102,10 +121,14 @@ void MainInterface::OnLoadButtonClicked() {
     lightFieldWidget->setLightField(viewInfos, iMax, jMax);
 }
 
-void MainInterface::OnFocalSliderValueChanged(int value) {
-    lightFieldWidget->setFocalLength(value / 10.0f);
+void MainInterface::OnFocusSliderValueChanged(int value) {
+    const float newValue = value / 10.0f;
+    lightFieldWidget->setFocusPoint(newValue);
+    focusEdit->setText(QString::number(newValue, 'f', 2));
 }
 
-void  MainInterface::OnApertureSliderValueChanged(int value) {
-    lightFieldWidget->setApertureSize(value / 10.0f);
+void MainInterface::OnApertureSliderValueChanged(int value) {
+    const float newValue = value / 10.0f;
+    lightFieldWidget->setApertureSize(newValue);
+    apertureEdit->setText(QString::number(newValue, 'f', 2));
 }

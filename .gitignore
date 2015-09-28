@@ -3,6 +3,7 @@
 *.png
 *.bmp
 *.avi
+!output/*
 
 ## ignore directory
 Misc/*

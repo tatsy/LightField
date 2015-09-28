@@ -21,6 +21,8 @@
 #include <QtWidgets/qboxlayout.h>
 #include <QtWidgets/qpushbutton.h>
 #include <QtWidgets/qslider.h>
+#include <QtWidgets/qlabel.h>
+#include <QtWidgets/qlineedit.h>
 #include <QtGui/qevent.h>
 
 #include "image_info.h"
@@ -40,7 +42,11 @@ private:
     QWidget* rightContainer;
     QVBoxLayout* vLayoutForRight;
     QPushButton* loadButton;
-    QSlider* focalSlider;
+    QLabel* focusLabel;
+    QLabel* apertureLabel;
+    QLineEdit* focusEdit;
+    QLineEdit* apertureEdit;
+    QSlider* focusSlider;
     QSlider* apertureSlider;
 
     // Other variables
@@ -56,7 +62,7 @@ public:
 
 protected slots:
     void OnLoadButtonClicked();
-    void OnFocalSliderValueChanged(int value);
+    void OnFocusSliderValueChanged(int value);
     void OnApertureSliderValueChanged(int value);
 };
 
