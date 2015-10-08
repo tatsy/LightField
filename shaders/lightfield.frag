@@ -1,4 +1,4 @@
-#version 330
+#version 150
 
 smooth in  vec4 position;
 smooth in  vec2 textureCoords;

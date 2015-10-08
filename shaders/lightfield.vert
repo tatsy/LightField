@@ -1,4 +1,4 @@
-#version 330
+#version 150
 
 in vec3 vertices;
 in vec2 texcoords;

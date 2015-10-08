@@ -162,3 +162,4 @@ $RECYCLE.BIN/
 # CMake auto-generated files
 *.cmake
 build/*
+directories.h
