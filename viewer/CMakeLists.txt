@@ -37,9 +37,9 @@ set(QT_LIB_LIST Qt5Widgets
                 Qt5OpenGLd
                 Qt5Test
                 Qt5Testd
-                icuin53
-                icuuc53
-                icudt53)
+                icuin54
+                icuuc54
+                icudt54)
 
 # ------------------------------------------------------------------------------
 # Copy Qt5 DLLs

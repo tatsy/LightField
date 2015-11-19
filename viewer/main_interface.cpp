@@ -1,5 +1,7 @@
 #include "main_interface.h"
 
+#include <iostream>
+
 #include <QtCore/qdebug.h>
 #include <QtWidgets/qfiledialog.h>
 
@@ -97,15 +99,20 @@ void MainInterface::OnLoadButtonClicked() {
         if (f.suffix() == "png") {
             int row, col;
             double camx, camy;
+            char ext[64];
             int ret = sscanf(files[i].toStdString().c_str(),
-                             "out_%d_%d_%lf_%lf.png", &row, &col, &camx, &camy);
-            if (ret == 4) {
+                             "out_%d_%d_%lf_%lf%s", &row, &col, &camx, &camy, ext);
+            if (ret == 5) {
                 qDebug("File name parsed: %s", files[i].toStdString().c_str());
                 if (row >= 16 || col >= 16) continue;
                 viewInfos.emplace_back(dirString + "/" + files[i],
                                        row, col, camx, camy);
                 iMax = std::max(iMax, row + 1);
                 jMax = std::max(jMax, col + 1);
+            } else {
+                std::cerr << "[ERROR] File name is invalid!!" << std::endl;
+                std::cerr << "        It must be like \"out_%d_%d_%lf_%lf.png\"" << std::endl;
+                std::abort();
             }
         }        
     }
