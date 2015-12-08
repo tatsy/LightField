@@ -7,6 +7,6 @@
 
 #include <string>
 
-const std::string kShaderDirectory = "C:/Users/Tatsuya/Desktop/LightField/shaders/";
+const std::string kShaderDirectory = "C:/Users/Tatsuya/Documents/Programs/Cpp/LightField/shaders/";
 
 #endif  // _DIRECTORYES_H_

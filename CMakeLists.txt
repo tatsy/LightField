@@ -14,11 +14,12 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Find Qt5
 if (WIN32)
-  set(Your_Qt5_DIR "Your_Qt5_DIR" CACHE STRING "Your_Qt5_DIR")
-  if (NOT EXISTS "${Your_Qt5_DIR}/include/QtCore/qobject.h")
-    message(FATAL_ERROR "ERROR: Qt5 not found!!")
+  set(QT5_ROOT ${QT5_ROOT} CACHE PATH "QT5-NOT_FOUND")
+  if (NOT EXISTS "${QT5_ROOT}/lib/cmake")
+    message(FATAL_ERROR "[ERROR] Qt5 libraries not found!!")
   else()
-    set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${Your_Qt5_DIR})
+    message(STATUS "Qt5: ${QT5_ROOT}")
+    set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${QT5_ROOT})
   endif()
 endif()
 
