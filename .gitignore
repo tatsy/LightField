@@ -5,6 +5,13 @@
 *.avi
 !output/*
 
+data/*
+!data/download.py
+
+.idea/*
+cmake-build-debug/*
+cmake-build-release/*
+
 ## ignore directory
 Misc/*
 

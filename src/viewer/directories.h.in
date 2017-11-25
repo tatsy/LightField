@@ -1,0 +1,10 @@
+#ifdef _MSC_VER
+#pragma once
+#endif
+
+#ifndef DIRECTORYES_H
+#define DIRECTORYES_H
+
+const char *SHADER_DIRECTORY = "@LIGHT_FIELD_ROOT@/src/shaders/";
+
+#endif  // DIRECTORYES_H
