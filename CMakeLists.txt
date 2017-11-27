@@ -5,6 +5,7 @@ project(LightField)
 set(LIGHT_FIELD_ROOT ${CMAKE_CURRENT_LIST_DIR})
 
 # Compiler options
+set(CMAKE_CXX_STANDARD 14)
 if (NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -O2 -g")
 endif()
@@ -25,6 +26,12 @@ endif()
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 find_package(OpenGL REQUIRED)
+
+get_target_property(QtCore_location Qt5::Core LOCATION)
+message(STATUS "QtCore: ${QtCore_location}")
+get_target_property(QtGui_location Qt5::Gui LOCATION)
+message(STATUS "QtGui: ${QtGui_location}")
+
 
 # Set output path
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
