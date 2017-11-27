@@ -11,7 +11,8 @@ You need Qt5 to build this project. With Qt5, you can easily build the project u
 
 ```shell
 $ git clone https://github.com/tatsy/LightField.git
-$ cmake .
+$ mkdir build && cd build
+$ cmake ..
 $ cmake --build .
 ```
 
@@ -20,6 +21,9 @@ $ cmake --build .
 #### Datasets
 
 This viewer accepts light field images from [Stanford Light Field Archive](http://lightfield.stanford.edu/lfs.html). Please download the rectified datasets at this archive.
+
+Also, I prepared a download script in ``data`` directory. Please run ``download.py`` on ``data`` directory and choose the light field file that you want.
+
 
 #### Load
 
