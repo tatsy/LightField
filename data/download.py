@@ -4,7 +4,8 @@ import requests
 import zipfile
 import tarfile
 
-urls = ["http://lightfield.stanford.edu/data/lego_lf/rectified.zip"]
+urls = ["http://lightfield.stanford.edu/data/lego_lf/rectified.zip",
+        "http://lightfield.stanford.edu/data/chess_lf/rectified.zip"]
 
 def get_file_from_url(url):
     temp = url.split('/')[-1]
@@ -69,6 +70,10 @@ def process(url):
     filename = download(url)
     unarchive(filename)
     os.remove(filename)
+
+    zipname,_ = os.path.splitext(os.path.basename(url))
+    dirname = os.path.basename(os.path.dirname(url))
+    os.rename(zipname, dirname)
 
 def main():
     for i, u in enumerate(urls):

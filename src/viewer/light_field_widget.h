@@ -34,8 +34,8 @@ public:
     float focusPoint() const;
     float apertureSize() const;
 
-	QSize sizeHint() const override;
-	QSize minimumSizeHint() const override;
+    QSize sizeHint() const override;
+    QSize minimumSizeHint() const override;
 
 protected:
     void initializeGL() override;
@@ -50,17 +50,19 @@ protected slots:
     void animate();
 
 private:
-	std::unique_ptr<QOpenGLVertexArrayObject> vao;
-	std::unique_ptr<QOpenGLBuffer> vbo;
-	std::unique_ptr<QOpenGLBuffer> ibo;
+    std::unique_ptr<QOpenGLVertexArrayObject> vao;
+    std::unique_ptr<QOpenGLBuffer> vbo;
+    std::unique_ptr<QOpenGLBuffer> ibo;
 
     std::unique_ptr<QOpenGLShaderProgram> shaderProgram;
     std::unique_ptr<QOpenGLTexture> lightFieldTexture;
 
     std::unique_ptr<QTimer> timer;
 
-	float focus, aperture;
+    float focus, aperture;
     int lfRows, lfCols;
+    QSize imageSize;
+    QPoint prevMouseClick;
     QPointF cameraPosition;
     bool isClick;
 };

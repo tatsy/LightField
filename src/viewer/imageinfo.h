@@ -2,10 +2,10 @@
 #pragma once
 #endif
 
-#ifndef _IMAGE_INFO_H_
-#define _IMAGE_INFO_H_
+#ifndef IMAGE_INFO_H
+#define IMAGE_INFO_H
 
-#include <QtCore/qstring.h>
+#include <qstring.h>
 
 //! Class to store information of each camera view image
 class ImageInfo {
@@ -62,4 +62,4 @@ public:
     inline double cameraX() const { return _cameraX; }
 };
 
-#endif  // _IMAGE_INFO_H_
+#endif  // IMAGE_INFO_H

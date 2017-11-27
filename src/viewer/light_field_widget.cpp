@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 #include <QtGui/qmatrix4x4.h>
 #include <QtGui/qvector3d.h>
@@ -21,6 +22,7 @@ LightFieldWidget::LightFieldWidget(QWidget* parent)
     , aperture(5.0f)
     , lfRows(0)
     , lfCols(0)
+    , imageSize(1, 1)
     , cameraPosition(0.5f, 0.5f)
     , isClick(false) {
     // Setup timer
@@ -33,11 +35,13 @@ LightFieldWidget::~LightFieldWidget() {
 }
 
 QSize LightFieldWidget::sizeHint() const {
-    return QSize(512, 512);
+    const int h = 512;
+    const int w = h * imageSize.width() / imageSize.height();
+    return QSize(w, h);
 }
 
 QSize LightFieldWidget::minimumSizeHint() const {
-    return QSize(512, 512);
+    return sizeHint();
 }
 
 void LightFieldWidget::initializeGL() {
@@ -105,7 +109,7 @@ void LightFieldWidget::paintGL() {
     if (!lightFieldTexture) return;
 
     // Clear buffers
-	glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     // Enable shader
     shaderProgram->bind();
@@ -118,7 +122,7 @@ void LightFieldWidget::paintGL() {
 
     // Set texture parameters
     lightFieldTexture->bind(0);
-    shaderProgram->setUniformValue("texture", 0);
+    shaderProgram->setUniformValue("textureImages", 0);
     shaderProgram->setUniformValue("focusPoint", focus);
     shaderProgram->setUniformValue("apertureSize", aperture);
     shaderProgram->setUniformValue("rows", lfRows);
@@ -134,16 +138,18 @@ void LightFieldWidget::paintGL() {
 void LightFieldWidget::mousePressEvent(QMouseEvent* ev) {
     if (ev->button() == Qt::MouseButton::LeftButton) {
         isClick = true;
-        cameraPosition.setX((float)ev->x() / width());
-        cameraPosition.setY((float)ev->y() / height());
+        prevMouseClick = ev->pos();
     }
 }
 
 void LightFieldWidget::mouseMoveEvent(QMouseEvent* ev) {
     if (ev->buttons() & Qt::MouseButton::LeftButton) {
         if (isClick) {
-            cameraPosition.setX((float)ev->x() / width());
-            cameraPosition.setY((float)ev->y() / height());
+            const double size = (double)std::min(width(), height());
+            const double dx = (double)(ev->pos().x() - prevMouseClick.x()) / size;
+            const double dy = (double)(ev->pos().y() - prevMouseClick.y()) / size;
+            cameraPosition.setX(std::max(0.0, std::min(cameraPosition.x() + dx, 1.0)));
+            cameraPosition.setY(std::max(0.0, std::min(cameraPosition.y() + dy, 1.0)));
         }
     }
 }
@@ -156,9 +162,9 @@ void LightFieldWidget::mouseReleaseEvent(QMouseEvent* ev) {
 
 void LightFieldWidget::setLightField(const std::vector<ImageInfo>& viewInfos,
                                      int rows, int cols) {
-    lfRows = rows;
-    lfCols = cols;
     makeCurrent();
+    this->lfRows = rows;
+    this->lfCols = cols;
 
     // Check image size of each view
     QImage temp(viewInfos[0].path());
@@ -169,12 +175,12 @@ void LightFieldWidget::setLightField(const std::vector<ImageInfo>& viewInfos,
     }
     const int imageW = temp.width();
     const int imageH = temp.height();
+    this->imageSize = QSize(imageW, imageH);
+    updateGeometry();
 
     // Create large tiled image
-    QImage tiledImage(imageW * rows, imageH * cols, temp.format());
+    std::vector<uint8_t> imageData((rows * cols) * imageH * imageW * 3);
     for (int k = 0; k < viewInfos.size(); k++) {
-        const int i = viewInfos[k].row();
-        const int j = viewInfos[k].col();
         QImage img(viewInfos[k].path());
         if (img.width() != imageW || img.height() != imageH) {
             qDebug("[ERROR] image size invalid!!");
@@ -183,19 +189,29 @@ void LightFieldWidget::setLightField(const std::vector<ImageInfo>& viewInfos,
 
         for (int y = 0; y < imageH; y++) {
             for (int x = 0; x < imageW; x++) {
-                const QRgb rgb = img.pixel(x, y);
-                tiledImage.setPixel(j * imageW + x, i * imageH + y, rgb);
+                const QColor color = img.pixelColor(x, y);
+                imageData[((k * imageH + y) * imageW + x) * 3 + 0] = (uint8_t)color.red();
+                imageData[((k * imageH + y) * imageW + x) * 3 + 1] = (uint8_t)color.green();
+                imageData[((k * imageH + y) * imageW + x) * 3 + 2] = (uint8_t)color.blue();
             }
         }
     }
 
-    lightFieldTexture = std::make_unique<QOpenGLTexture>(QOpenGLTexture::Target2D);
-    lightFieldTexture->setData(tiledImage, QOpenGLTexture::GenerateMipMaps);
+    lightFieldTexture = std::make_unique<QOpenGLTexture>(QOpenGLTexture::Target3D);
+    lightFieldTexture->setAutoMipMapGenerationEnabled(false);
     lightFieldTexture->setMinMagFilters(QOpenGLTexture::Filter::Linear, QOpenGLTexture::Filter::Linear);
     lightFieldTexture->setWrapMode(QOpenGLTexture::CoordinateDirection::DirectionS,
                                    QOpenGLTexture::WrapMode::ClampToEdge);
     lightFieldTexture->setWrapMode(QOpenGLTexture::CoordinateDirection::DirectionT,
                                    QOpenGLTexture::WrapMode::ClampToEdge);
+    lightFieldTexture->setWrapMode(QOpenGLTexture::CoordinateDirection::DirectionR,
+                                   QOpenGLTexture::WrapMode::ClampToEdge);
+    lightFieldTexture->setFormat(QOpenGLTexture::TextureFormat::RGB8_UNorm);
+    lightFieldTexture->setSize(imageW, imageH, rows * cols);
+    lightFieldTexture->allocateStorage(QOpenGLTexture::PixelFormat::RGB,
+                                       QOpenGLTexture::PixelType::UInt8);
+    lightFieldTexture->setData(0, 0, QOpenGLTexture::PixelFormat::RGB,
+                               QOpenGLTexture::PixelType::UInt8, imageData.data());
 
     qDebug("[INFO] light field texture is binded!!");
 }
