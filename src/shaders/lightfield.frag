@@ -29,6 +29,7 @@ void main(void) {
     float centerCameraY = initCameraY + cameraIndexY * cameraGapY;
     float focusPointRatio = 1.0 + focusPoint / focusRatio;
 
+    /*
     color = vec4(0.0, 0.0, 0.0, 0.0);
     int  validPixelCount = 0;
     for (int i = 0; i < rows; i++) {
@@ -45,9 +46,10 @@ void main(void) {
                 float px = 0.5 * pixelX + 0.5;
                 float py = 0.5 * pixelY + 0.5;
                 if(px >= 0.0 && py >= 0.0 && px < 1.0 && py < 1.0) {
-                    vec2 V;
+                    vec3 V;
                     V.x = float(j) * spanX + px * spanX;
                     V.y = float(i) * spanY + py * spanY;
+                    V.z = float(i * cols + j) / float(rows * cols);
                     color = color + texture(textureImages, V);
                     validPixelCount++;
                 }
@@ -55,4 +57,6 @@ void main(void) {
         }
     }
     color = color / validPixelCount;
+    */
+    color = texture(textureImages, vec2(textureCoords)); //vec3(0.5, 0.5, 0.5)); //vec3(textureCoords, 0.5));
 }

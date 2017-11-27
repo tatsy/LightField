@@ -21,6 +21,7 @@ LightFieldWidget::LightFieldWidget(QWidget* parent)
     , aperture(5.0f)
     , lfRows(0)
     , lfCols(0)
+    , imageSize(0, 0)
     , cameraPosition(0.5f, 0.5f)
     , isClick(false) {
     // Setup timer
@@ -33,11 +34,14 @@ LightFieldWidget::~LightFieldWidget() {
 }
 
 QSize LightFieldWidget::sizeHint() const {
-    return QSize(512, 512);
+    int ratio = devicePixelRatio();
+    int w = std::max(1024, imageSize.width()) / ratio;
+    int h = std::max(1024, imageSize.height()) / ratio;
+    return QSize(w, h);
 }
 
 QSize LightFieldWidget::minimumSizeHint() const {
-    return QSize(512, 512);
+    return sizeHint();
 }
 
 void LightFieldWidget::initializeGL() {
@@ -117,8 +121,9 @@ void LightFieldWidget::paintGL() {
     shaderProgram->setUniformValue("cameraPositionY", (float)cameraPosition.y());
 
     // Set texture parameters
-    lightFieldTexture->bind(0);
-    shaderProgram->setUniformValue("texture", 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, lightFieldTexture->textureId());
+    shaderProgram->setUniformValue("textureImages", 0);
     shaderProgram->setUniformValue("focusPoint", focus);
     shaderProgram->setUniformValue("apertureSize", aperture);
     shaderProgram->setUniformValue("rows", lfRows);
@@ -169,12 +174,11 @@ void LightFieldWidget::setLightField(const std::vector<ImageInfo>& viewInfos,
     }
     const int imageW = temp.width();
     const int imageH = temp.height();
+    imageSize = QSize(imageW, imageH);
 
     // Create large tiled image
-    QImage tiledImage(imageW * rows, imageH * cols, temp.format());
+    std::vector<uint8_t> imageData((rows * cols) * imageH * imageW * 4, 255);
     for (int k = 0; k < viewInfos.size(); k++) {
-        const int i = viewInfos[k].row();
-        const int j = viewInfos[k].col();
         QImage img(viewInfos[k].path());
         if (img.width() != imageW || img.height() != imageH) {
             qDebug("[ERROR] image size invalid!!");
@@ -183,19 +187,31 @@ void LightFieldWidget::setLightField(const std::vector<ImageInfo>& viewInfos,
 
         for (int y = 0; y < imageH; y++) {
             for (int x = 0; x < imageW; x++) {
-                const QRgb rgb = img.pixel(x, y);
-                tiledImage.setPixel(j * imageW + x, i * imageH + y, rgb);
+                const QColor color = img.pixelColor(x, y);
+                imageData[((k * imageH + y) * imageW + x) * 4 + 0] = 127; //(uint8_t)color.red();
+                imageData[((k * imageH + y) * imageW + x) * 4 + 1] = 127; //(uint8_t)color.green();
+                imageData[((k * imageH + y) * imageW + x) * 4 + 2] = 0; //(uint8_t)color.blue();
             }
         }
     }
 
+//    lightFieldTexture = std::make_unique<QOpenGLTexture>(QOpenGLTexture::Target3D);
     lightFieldTexture = std::make_unique<QOpenGLTexture>(QOpenGLTexture::Target2D);
-    lightFieldTexture->setData(tiledImage, QOpenGLTexture::GenerateMipMaps);
+    lightFieldTexture->setAutoMipMapGenerationEnabled(true);
     lightFieldTexture->setMinMagFilters(QOpenGLTexture::Filter::Linear, QOpenGLTexture::Filter::Linear);
     lightFieldTexture->setWrapMode(QOpenGLTexture::CoordinateDirection::DirectionS,
                                    QOpenGLTexture::WrapMode::ClampToEdge);
     lightFieldTexture->setWrapMode(QOpenGLTexture::CoordinateDirection::DirectionT,
                                    QOpenGLTexture::WrapMode::ClampToEdge);
+    lightFieldTexture->setWrapMode(QOpenGLTexture::CoordinateDirection::DirectionR,
+                                   QOpenGLTexture::WrapMode::ClampToEdge);
+    lightFieldTexture->setFormat(QOpenGLTexture::TextureFormat::RGBA8_UNorm);
+//    lightFieldTexture->setSize(imageW, imageH, rows * cols);
+    lightFieldTexture->setSize(imageW * cols, imageH * rows);
+    lightFieldTexture->allocateStorage(QOpenGLTexture::PixelFormat::RGBA,
+                                       QOpenGLTexture::PixelType::UInt8);
+    lightFieldTexture->setData(0, 0, QOpenGLTexture::PixelFormat::RGBA,
+                               QOpenGLTexture::PixelType::UInt8, imageData.data());
 
     qDebug("[INFO] light field texture is binded!!");
 }

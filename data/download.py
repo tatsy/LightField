@@ -70,6 +70,10 @@ def process(url):
     unarchive(filename)
     os.remove(filename)
 
+    zipname,_ = os.path.splitext(os.path.basename(url))
+    dirname = os.path.basename(os.path.dirname(url))
+    os.rename(zipname, dirname)
+
 def main():
     for i, u in enumerate(urls):
         print('[%d] %s' % (i + 1, u))

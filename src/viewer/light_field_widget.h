@@ -61,6 +61,7 @@ private:
 
 	float focus, aperture;
     int lfRows, lfCols;
+    QSize imageSize;
     QPointF cameraPosition;
     bool isClick;
 };
